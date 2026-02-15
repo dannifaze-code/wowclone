@@ -1,0 +1,70 @@
+{
+  "game": {
+    "title": "Ember & Iron",
+    "version": "0.1.0-web",
+    "tickRate": 20,
+    "saveMode": "local",
+    "serverAuthority": false,
+    "startingZoneId": "union_border_outpost"
+  },
+  "world": {
+    "timeScale": 4.0,
+    "dayLengthMinutes": 90,
+    "weatherEnabled": false
+  },
+  "travel": {
+    "longRoadEnabled": true,
+    "noInstantTeleport": true,
+    "caravan": {
+      "enabled": true,
+      "fatigueReductionPercent": 25,
+      "rationEfficiencyPercent": 15,
+      "ambushChancePerKilometer": 0.02
+    }
+  },
+  "survival": {
+    "enabled": true,
+    "inventory": {
+      "maxSlots": 24,
+      "baseCarryWeight": 35.0,
+      "encumbranceSoftCapPercent": 90,
+      "encumbranceHardCapPercent": 120
+    },
+    "fatigue": {
+      "max": 100,
+      "restedThreshold": 20,
+      "tiredThreshold": 60,
+      "exhaustedThreshold": 85,
+      "regenPerMinuteInCamp": 2.5,
+      "regenPerMinuteInHub": 5.0,
+      "drainPerMinuteWalking": 0.8,
+      "drainPerMinuteRunning": 1.6,
+      "drainPerMinuteOverEncumbered": 2.2,
+      "staminaPenaltyAtTiredPercent": 10,
+      "staminaPenaltyAtExhaustedPercent": 25,
+      "moveSpeedPenaltyAtExhaustedPercent": 15
+    },
+    "rations": {
+      "enabled": true,
+      "hungerMax": 100,
+      "thirstMax": 100,
+      "hungerDrainPerMinute": 0.35,
+      "thirstDrainPerMinute": 0.55,
+      "extraDrainInColdPercent": 20,
+      "extraDrainInHeatPercent": 15,
+      "combatPenaltyBelowHunger": 25,
+      "combatPenaltyBelowThirst": 25,
+      "penaltyAmountPercent": 10,
+      "consume": {
+        "eatingTimeSeconds": 4.0,
+        "drinkingTimeSeconds": 2.5,
+        "interruptOnDamage": true
+      }
+    }
+  },
+  "ui": {
+    "showSurvivalMeters": true,
+    "showEncumbrance": true,
+    "chatEnabled": false
+  }
+}

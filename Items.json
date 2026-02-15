@@ -1,0 +1,85 @@
+{
+  "items": [
+    {
+      "id": "ration_jerky",
+      "name": "Smoked Jerky",
+      "type": "food",
+      "stackMax": 20,
+      "weight": 0.2,
+      "value": 3,
+      "consumeTimeSeconds": 4.0,
+      "hungerRestore": 25,
+      "thirstRestore": 0,
+      "tags": [
+        "food",
+        "ration"
+      ]
+    },
+    {
+      "id": "ration_hardtack",
+      "name": "Hardtack",
+      "type": "food",
+      "stackMax": 20,
+      "weight": 0.25,
+      "value": 2,
+      "consumeTimeSeconds": 4.5,
+      "hungerRestore": 20,
+      "thirstRestore": -5,
+      "tags": [
+        "food",
+        "ration"
+      ]
+    },
+    {
+      "id": "water_waterskin",
+      "name": "Waterskin",
+      "type": "drink",
+      "stackMax": 5,
+      "weight": 1.0,
+      "value": 4,
+      "consumeTimeSeconds": 2.5,
+      "hungerRestore": 0,
+      "thirstRestore": 35,
+      "tags": [
+        "drink",
+        "water"
+      ]
+    },
+    {
+      "id": "camp_campkit",
+      "name": "Camp Kit",
+      "type": "camp",
+      "stackMax": 3,
+      "weight": 2.0,
+      "value": 12,
+      "consumeTimeSeconds": 3.0,
+      "tags": [
+        "camp"
+      ]
+    },
+    {
+      "id": "ammo_pellets_basic",
+      "name": "Basic Pellets",
+      "type": "ammo",
+      "stackMax": 200,
+      "weight": 0.01,
+      "value": 1,
+      "tags": [
+        "ammo",
+        "blackpowder"
+      ]
+    },
+    {
+      "id": "material_scrap_iron",
+      "name": "Scrap Iron",
+      "type": "material",
+      "stackMax": 50,
+      "weight": 0.5,
+      "value": 2,
+      "tags": [
+        "material",
+        "iron"
+      ]
+    }
+  ]
+}
