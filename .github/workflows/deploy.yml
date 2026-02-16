@@ -1,0 +1,112 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate Game Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          echo "Checking game structure..."
+          files=(
+            "index.html"
+            "src/app.js"
+            "src/Systems/Inventory.logic.js"
+            "src/Systems/Survival.logic.js"
+            "src/Systems/NPC.logic.js"
+            "src/Systems/Combat.logic.js"
+            "config/settings.json"
+            "data/Registry/Items.json"
+            "data/Registry/NPCs.json"
+            "data/Registry/Zones.json"
+          )
+          all_ok=true
+          for f in "${files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "  OK: $f"
+            else
+              echo "  MISSING: $f"
+              all_ok=false
+            fi
+          done
+          if [ "$all_ok" = false ]; then
+            echo "Some required files are missing!"
+            exit 1
+          fi
+          echo "All required files present."
+
+      - name: Validate JSON files
+        run: |
+          echo "Validating JSON..."
+          for f in config/settings.json data/Registry/Items.json data/Registry/NPCs.json data/Registry/Zones.json; do
+            if python3 -m json.tool "$f" > /dev/null 2>&1; then
+              echo "  OK: $f"
+            else
+              echo "  INVALID JSON: $f"
+              exit 1
+            fi
+          done
+          echo "All JSON files valid."
+
+      - name: Check JavaScript syntax
+        run: |
+          echo "Checking JS syntax..."
+          for f in src/app.js src/Systems/Inventory.logic.js src/Systems/Survival.logic.js src/Systems/NPC.logic.js src/Systems/Combat.logic.js; do
+            if node --check "$f" 2>/dev/null; then
+              echo "  OK: $f"
+            else
+              echo "  SYNTAX ERROR: $f"
+              exit 1
+            fi
+          done
+          echo "All JS files have valid syntax."
+
+      - name: Validate HTML
+        run: |
+          if grep -q '<canvas id="game">' index.html && grep -q 'src/app.js' index.html; then
+            echo "HTML structure looks good."
+          else
+            echo "HTML missing required elements."
+            exit 1
+          fi
+
+  deploy:
+    name: Deploy
+    needs: validate
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

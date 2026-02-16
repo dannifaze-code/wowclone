@@ -1,0 +1,58 @@
+{
+  "npcs": [
+    {
+      "id": "npc_merchant_outpost",
+      "name": "Galen the Trader",
+      "type": "merchant",
+      "zone": "union_border_outpost",
+      "position": { "x": 5, "y": 0, "z": -3 },
+      "dialogue": {
+        "greeting": "Road's been long, traveller. Need supplies?",
+        "farewell": "May the Ember keep you warm."
+      },
+      "inventory": ["ration_jerky", "ration_hardtack", "water_waterskin", "camp_campkit"],
+      "tags": ["merchant", "friendly"]
+    },
+    {
+      "id": "npc_guard_outpost",
+      "name": "Sentry Renn",
+      "type": "guard",
+      "zone": "union_border_outpost",
+      "position": { "x": -8, "y": 0, "z": -6 },
+      "dialogue": {
+        "greeting": "Keep your weapons holstered inside the outpost.",
+        "farewell": "Stay sharp out there."
+      },
+      "hostile": false,
+      "tags": ["guard", "union"]
+    },
+    {
+      "id": "npc_wanderer",
+      "name": "Dust Walker",
+      "type": "wanderer",
+      "zone": "union_border_outpost",
+      "position": { "x": 12, "y": 0, "z": 8 },
+      "dialogue": {
+        "greeting": "You heading north? Don't. The Iron Reach eats the careless.",
+        "farewell": "Your choice. The road doesn't care either way."
+      },
+      "hostile": false,
+      "tags": ["wanderer", "lore"]
+    },
+    {
+      "id": "npc_bandit_scout",
+      "name": "Ashen Raider",
+      "type": "enemy",
+      "zone": "the_long_road",
+      "position": { "x": -20, "y": 0, "z": -20 },
+      "stats": {
+        "health": 60,
+        "damage": 8,
+        "armor": 2
+      },
+      "lootTable": ["ration_jerky", "ammo_pellets_basic", "material_scrap_iron"],
+      "hostile": true,
+      "tags": ["bandit", "enemy"]
+    }
+  ]
+}
