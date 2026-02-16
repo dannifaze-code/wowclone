@@ -1,0 +1,24 @@
+{
+  "zones": [
+    {
+      "id": "union_border_outpost",
+      "name": "Union Border Outpost",
+      "type": "hub",
+      "level": 1,
+      "bounds": { "minX": -40, "maxX": 40, "minZ": -40, "maxZ": 40 },
+      "environment": { "cold": false, "heat": false },
+      "spawns": ["npc_merchant_outpost", "npc_guard_outpost", "npc_wanderer"],
+      "description": "A dusty waystation on the edge of Union territory. Traders, guards, and drifters share the last safe fire before the Long Road."
+    },
+    {
+      "id": "the_long_road",
+      "name": "The Long Road",
+      "type": "wilderness",
+      "level": 2,
+      "bounds": { "minX": -100, "maxX": 100, "minZ": -100, "maxZ": 100 },
+      "environment": { "cold": false, "heat": true },
+      "spawns": ["npc_bandit_scout"],
+      "description": "Cracked earth and relentless sun. The road between outposts is where supplies run thin and bandits grow bold."
+    }
+  ]
+}

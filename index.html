@@ -3,27 +3,42 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Ember & Iron — Phase 1 (Web Prototype)</title>
+  <title>Ember & Iron — WoW Clone Prototype</title>
   <style>
     html, body { margin:0; padding:0; height:100%; background:#0b0b0c; overflow:hidden; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
     #game { position:fixed; inset:0; }
+
+    /* Main HUD (top-left) */
     #hud {
       position:fixed; left:10px; top:10px; z-index:10;
       color:#e8e6df; font-size:14px; line-height:1.25;
-      background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 12px;
       padding: 10px 12px;
       max-width: 360px;
       user-select:none;
     }
-    #bars { display:grid; gap:6px; margin-top:6px; }
-    .barRow { display:grid; grid-template-columns: 86px 1fr 44px; gap:8px; align-items:center; }
+    #bars { display:grid; gap:5px; margin-top:6px; }
+    .barRow { display:grid; grid-template-columns: 62px 1fr 36px; gap:8px; align-items:center; }
     .barOuter { height:10px; border-radius:999px; background: rgba(255,255,255,0.10); overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
-    .barInner { height:100%; width:50%; background: linear-gradient(90deg, #ff8a00, #ffd000); }
+    .barInner { height:100%; width:50%; border-radius:999px; background: linear-gradient(90deg, #ff8a00, #ffd000); transition: width 0.2s ease; }
     .barInner.blue { background: linear-gradient(90deg, #1f8fff, #6fd3ff); }
     .barInner.red { background: linear-gradient(90deg, #ff3b3b, #ff8a8a); }
+    .barInner.green { background: linear-gradient(90deg, #22cc44, #66ff88); }
     .tiny { opacity:0.85; font-size:12px; }
+
+    /* XP bar */
+    #xp-bar {
+      margin-top:6px; font-size:11px; color:#c8b888; opacity:0.9;
+    }
+
+    /* Player health quick display */
+    #player-health {
+      margin-top:2px; font-size:11px; color:#88ddaa; opacity:0.9;
+    }
+
+    /* Toast */
     #toast {
       position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
       z-index:20; color:#f3f0e8;
@@ -35,8 +50,54 @@
       user-select:none;
     }
     #toast.show { opacity:1; }
+
+    /* Target info (top-center) */
+    #target-info {
+      position:fixed; top:10px; left:50%; transform:translateX(-50%);
+      z-index:10; color:#e8e6df; font-size:14px;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 8px 16px;
+      user-select:none;
+      opacity:0; transition: opacity 160ms ease;
+      pointer-events:none;
+    }
+    #target-info.show { opacity:1; }
+
+    /* Dialogue box (bottom-center) */
+    #dialogue-box {
+      position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
+      z-index:15; color:#f3f0e8; font-size:14px;
+      background: rgba(20,18,15,0.85); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,200,100,0.25);
+      border-radius: 12px;
+      padding: 12px 18px;
+      max-width:min(480px, calc(100vw - 40px));
+      user-select:none;
+      opacity:0; transition: opacity 200ms ease;
+      pointer-events:none;
+    }
+    #dialogue-box.show { opacity:1; pointer-events:auto; }
+
+    /* Combat log (bottom-right) */
+    #combat-log {
+      position:fixed; right:10px; bottom:10px;
+      z-index:10; color:#ccc; font-size:11px; line-height:1.4;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      width: 260px; max-height: 120px;
+      overflow-y:auto; overflow-x:hidden;
+      user-select:none;
+    }
+    #combat-log::-webkit-scrollbar { width:4px; }
+    #combat-log::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+
+    /* Controls help */
     #help { margin-top:8px; }
-    .kbd { display:inline-block; padding:1px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); font-size:12px; }
+    .kbd { display:inline-block; padding:1px 6px; border-radius:6px; border:1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); font-size:11px; }
     a { color:#9ad1ff; }
   </style>
 </head>
@@ -52,17 +113,30 @@
 
     <div id="bars"></div>
 
-    <div id="inv" style="margin-top:8px;" class="tiny"></div>
+    <div id="xp-bar" class="tiny">Lv.1 — XP: 0/100 (0%)</div>
+    <div id="player-health" class="tiny">HP: 100/100 • DMG: 12</div>
+
+    <div id="inv" style="margin-top:4px;" class="tiny"></div>
 
     <div id="help" class="tiny">
-      <span class="kbd">WASD</span> move • <span class="kbd">Shift</span> sprint •
-      <span class="kbd">1</span> eat • <span class="kbd">2</span> drink •
-      <span class="kbd">C</span> camp
-      <div style="margin-top:4px; opacity:0.8;">Tip: pick up glowing cubes to stock supplies. Weight is a villain with a clipboard.</div>
+      <span class="kbd">WASD</span> move •
+      <span class="kbd">Shift</span> sprint •
+      <span class="kbd">Space</span> attack<br>
+      <span class="kbd">Tab</span> target •
+      <span class="kbd">E</span> interact •
+      <span class="kbd">C</span> camp<br>
+      <span class="kbd">1</span> eat •
+      <span class="kbd">2</span> drink •
+      <span class="kbd">R</span> respawn •
+      <span class="kbd">Esc</span> clear
+      <div style="margin-top:4px; opacity:0.7;">Walk near NPCs to talk. Approach enemies to fight. Pick up glowing cubes for loot.</div>
     </div>
   </div>
 
+  <div id="target-info"></div>
+  <div id="dialogue-box"></div>
   <div id="toast"></div>
+  <div id="combat-log"></div>
 
   <script type="module" src="./src/app.js"></script>
 </body>

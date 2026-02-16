@@ -1,0 +1,54 @@
+name: CI — Validate on PR
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check:
+    name: Lint & Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          files=(
+            "index.html"
+            "src/app.js"
+            "src/Systems/Inventory.logic.js"
+            "src/Systems/Survival.logic.js"
+            "src/Systems/NPC.logic.js"
+            "src/Systems/Combat.logic.js"
+            "config/settings.json"
+            "data/Registry/Items.json"
+            "data/Registry/NPCs.json"
+            "data/Registry/Zones.json"
+          )
+          for f in "${files[@]}"; do
+            [ -f "$f" ] && echo "OK: $f" || { echo "MISSING: $f"; exit 1; }
+          done
+
+      - name: Validate JSON
+        run: |
+          for f in config/settings.json data/Registry/Items.json data/Registry/NPCs.json data/Registry/Zones.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "Invalid JSON: $f"; exit 1; }
+          done
+
+      - name: Check JS syntax
+        run: |
+          for f in src/app.js src/Systems/*.logic.js; do
+            node --check "$f" || { echo "Syntax error: $f"; exit 1; }
+          done
+
+      - name: File size check
+        run: |
+          MAX_SIZE=500000
+          for f in src/app.js src/Systems/*.logic.js; do
+            size=$(stat -c%s "$f")
+            if [ "$size" -gt "$MAX_SIZE" ]; then
+              echo "WARNING: $f is ${size} bytes (over ${MAX_SIZE})"
+            else
+              echo "OK: $f (${size} bytes)"
+            fi
+          done
